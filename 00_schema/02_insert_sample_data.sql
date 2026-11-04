@@ -1,9 +1,9 @@
 -- Insert Customers
 INSERT INTO bank_customers (first_name, last_name, email, phone) 
-VALUES ('Alice', 'Uwase', 'alice.uwamahoro@email.com', '+250781112233');
+VALUES ('Alice', 'Uwase', 'alice.uwase@email.com', '+250781112233');
 
 INSERT INTO bank_customers (first_name, last_name, email, phone) 
-VALUES ('Frank', 'Habimana', 'eric.habimana@email.com', '+250782223344');
+VALUES ('Frank', 'Habimana', 'frank.habimana@email.com', '+250782223344');
 
 INSERT INTO bank_customers (first_name, last_name, email, phone) 
 VALUES ('Diane', 'Mutesi', 'diane.mutesi@email.com', '+250783334455');
@@ -21,4 +21,26 @@ VALUES (2, 'SAVINGS', 320000.00, 'ACTIVE');
 INSERT INTO bank_accounts (customer_id, account_type, balance, status) 
 VALUES (3, 'CHECKING', 12000.00, 'ACTIVE');
 
+INSERT INTO bank_accounts (customer_id, account_type, balance, status)
+VALUES (3, 'SAVINGS', 0.00, 'ACTIVE');      -- zero balance
+
+INSERT INTO bank_accounts (customer_id, account_type, balance, status)
+VALUES (2, 'CHECKING', 5000.00, 'SUSPENDED'); -- blocked account
+
+INSERT INTO bank_accounts (customer_id, account_type, balance, status)
+VALUES (1, 'SAVINGS', 800.00, 'CLOSED');      -- closed account
+
+-- Insert Transaction
+INSERT INTO bank_transactions (account_id, transaction_type, amount, status)
+VALUES (1, 'DEPOSIT', 20000, 'SUCCESS');
+INSERT INTO bank_transactions (account_id, transaction_type, amount, status)
+VALUES (1, 'WITHDRAWAL', 5000, 'SUCCESS');
+INSERT INTO bank_transactions (account_id, transaction_type, amount, status)
+VALUES (2, 'DEPOSIT', 10000, 'SUCCESS');
+INSERT INTO bank_transactions (account_id, transaction_type, amount, status)
+VALUES (3, 'WITHDRAWAL', 15000, 'SUCCESS');
+INSERT INTO bank_transactions (account_id, transaction_type, amount, status)
+VALUES (4, 'DEPOSIT', 3000, 'SUCCESS');
+
 COMMIT;
+
