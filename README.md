@@ -3,8 +3,8 @@
 ## Group Members
 | Name | Student ID |
 |------|------------|
-|Ishimwe Florence| <20251SEN040> |
-| Igiraneza Bernice Gentille | <27708> |
+|Ishimwe Florence| 20251SEN040 |
+| Igiraneza Bernice Gentille | 27708 |
 
 ## Application Description
 A banking application in Oracle PL/SQL that manages customers, accounts
@@ -54,5 +54,5 @@ One customer has many accounts; one account has many transactions.
 6. Compare with `screenshots/`
 
 ## Contributions
-- <Name 1>: <e.g. schema, process_transaction, success tests>
-- <Name 2>: <e.g. bulk processing, functions, error tests, documentation>
+- Igiraneza Bernice Gentille: schema, process_transaction, success tests
+- Ishimwe Florence:  bulk processing, functions, error tests, documentation
