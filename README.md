@@ -3,8 +3,8 @@
 ## Group Members
 | Name | Student ID |
 |------|------------|
-| <Full name 1> | <ID 1> |
-| <Full name 2> | <ID 2> |
+|<Ishimwe Florence>| <20251SEN040> |
+| <Igiraneza Bernice Gentille> | <27708> |
 
 ## Application Description
 A banking application in Oracle PL/SQL that manages customers, accounts
