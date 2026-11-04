@@ -41,6 +41,17 @@ INSERT INTO bank_transactions (account_id, transaction_type, amount, status)
 VALUES (3, 'WITHDRAWAL', 15000, 'SUCCESS');
 INSERT INTO bank_transactions (account_id, transaction_type, amount, status)
 VALUES (4, 'DEPOSIT', 3000, 'SUCCESS');
+INSERT INTO bank_transactions (account_id, transaction_type, amount, status)
+VALUES (2, 'WITHDRAWAL', 2500, 'SUCCESS');
+INSERT INTO bank_transactions (account_id, transaction_type, amount, status)
+VALUES (3, 'DEPOSIT', 50000, 'SUCCESS');
+INSERT INTO bank_transactions (account_id, transaction_type, amount, status)
+VALUES (4, 'WITHDRAWAL', 1000, 'SUCCESS');
+INSERT INTO bank_transactions (account_id, transaction_type, amount, status,error_message)
+VALUES (4, 'WITHDRAWAL', 99999, 'FAIL','Insufficient fund');
+INSERT INTO bank_transactions (account_id, transaction_type, amount, status)
+VALUES (4, 'DEPOSIT', 7500, 'SUCCESS');
+commit;
 
 COMMIT;
 
