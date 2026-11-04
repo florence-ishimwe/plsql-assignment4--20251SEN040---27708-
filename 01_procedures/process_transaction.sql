@@ -84,8 +84,8 @@ EXCEPTION
     WHEN OTHERS THEN
         ROLLBACK;
         IF SQLCODE BETWEEN -20999 AND -20000 THEN
-            RAAISE;
-        END IF
+            RAISE;
+        END IF;
         RAISE_APPLICATION_ERROR(-20099, 'Transaction error: ' || SQLERRM);
 END process_transaction;
 /
