@@ -69,5 +69,14 @@ plsql-assignment4-20251SEN040-27708/
 | ORA-20010 | Interest rate missing or above 100% |
 | ORA-20023 | Several savings accounts found (`TOO_MANY_ROWS`) |
 
-- Igiraneza Bernice Gentille: schema, process_transaction, success tests
-- Ishimwe Florence:  bulk processing, functions, error tests, documentation
+## Team Contributions
+| Area | Ishimwe Florence (20251SEN040) |  Igiraneza Bernice Gentille (27708) |
+|---|---|---|
+| Design | Schema and relationships | Application scope and error codes |
+| Schema and data | `01_create_tables.sql` | `02_insert_sample_data.sql` |
+| Procedures | `process_transaction` | `apply_monthly_interest` |
+| Functions | `get_account_balance`, `get_savings_account_id` | `get_customer_total_balance` |
+| Testing | `test_success_cases.sql` | `test_error_cases.sql` |
+| Screenshots | Success tests | Error tests |
+| Documentation | `README.md` | `IMPLEMENTATION_NOTES.md` |
+| Presentation | Records, collections, procedures | Cursors, bulk processing, exceptions |
