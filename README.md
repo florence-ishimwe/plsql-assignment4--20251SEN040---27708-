@@ -70,7 +70,7 @@ plsql-assignment4-20251SEN040-27708/
 | ORA-20023 | Several savings accounts found (`TOO_MANY_ROWS`) |
 
 ## Team Contributions
-| Area | Ishimwe Florence (20251SEN040) |  Igiraneza Bernice Gentille (27708) |
+| Area |Igiraneza Bernice Gentille (27708) | Ishimwe Florence (20251SEN040) |  
 |---|---|---|
 | Design | Schema and relationships | Application scope and error codes |
 | Schema and data | `01_create_tables.sql` | `02_insert_sample_data.sql` |
