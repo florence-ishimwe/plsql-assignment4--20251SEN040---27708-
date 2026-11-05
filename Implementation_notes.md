@@ -55,7 +55,6 @@ wraps anything unexpected with its original `SQLERRM`, so errors are never hidde
   and data verification.
 - `test_error_cases.sql`: ten failure cases covering every exception type.
 - Screenshots of each run are in `screenshots/`.
-
-
+  
 
 No transfer between accounts yet (no destination account column).
