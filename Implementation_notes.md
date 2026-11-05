@@ -1,45 +1,61 @@
 # Implementation Notes
 
 ## Design
-Three tables (customers, accounts, transactions) with primary keys,
-foreign keys and CHECK constraints, so the database itself rejects bad
-data. The transactions table is both an audit log and the place where
-failures are recorded.
+The application follows a simple flow: validate input, lock the data, apply the
+change, log the result. Business rules live in stored procedures and functions, so
+the database enforces them regardless of which client calls it.
 
-## Records and Collections
-`apply_monthly_interest` defines a record type (account_id, balance) and
-a nested table of that record. Rows are loaded into the collection in one
-fetch, then processed from memory.
+## Records
+- `process_transaction` uses a user-defined record (`t_txn_rec`) to group the
+  incoming account, type and amount, and a `%ROWTYPE` record to hold the full
+  account row fetched with `SELECT ... FOR UPDATE`.
+- `apply_monthly_interest` uses a record holding account_id and balance.
+
+## Collections
+`apply_monthly_interest` defines a nested table of records. All active savings
+accounts are loaded into it with one `BULK COLLECT`, then processed from memory.
 
 ## Cursors
-- **Implicit:** `SELECT INTO`, `UPDATE`, `INSERT` and `DELETE` statements.
-  `SQL%FOUND`, `SQL%NOTFOUND` and `SQL%ROWCOUNT` report the outcome.
-- **Explicit:** `c_savings_accounts` uses OPEN, FETCH and CLOSE to get
-  the savings accounts that need interest.
+- **Implicit:** after each `UPDATE` in `process_transaction`, `SQL%NOTFOUND` and
+  `SQL%ROWCOUNT` confirm that exactly one row changed.
+- **Explicit:** `apply_monthly_interest` uses `OPEN`, `FETCH ... BULK COLLECT` and
+  `CLOSE` on a declared cursor.
 
 ## Bulk Processing and Performance
-Row-by-row processing runs a loop where every iteration switches between
-the PL/SQL engine and the SQL engine (a context switch). With thousands of
-accounts, those switches dominate the run time.
-`BULK COLLECT` fetches all rows in one switch, and `FORALL` sends all
-updates to the SQL engine in one switch, so it is much faster at scale.
-With `SAVE EXCEPTIONS`, one bad row does not stop the batch. Failures are
-collected in `SQL%BULK_EXCEPTIONS` and reported afterwards.
-The trade-off is memory: very large collections should be fetched in
-chunks using `BULK COLLECT ... LIMIT`.
+Row-by-row processing switches between the PL/SQL engine and the SQL engine once
+per row (a context switch). For 10,000 accounts that means 10,000 switches.
+`BULK COLLECT` fetches all rows in one switch, and `FORALL` sends all updates in
+one switch, which is significantly faster for large volumes.
+
+`FORALL ... SAVE EXCEPTIONS` also keeps going when individual rows fail. Failed
+rows are reported through `SQL%BULK_EXCEPTIONS` (index and error code), and the
+rows that succeeded are kept. Test case 10 shows this: a negative rate violates
+the `balance >= 0` check on two accounts, while the zero-balance account succeeds.
+
+Other performance choices:
+- Indexes on the foreign keys (`customer_id`, `account_id`) speed up joins and lookups.
+- `SELECT ... FOR UPDATE` locks the account row, preventing two transactions from
+  changing the same balance at once.
+- Bulk work is committed once, not once per row.
 
 ## Exception Handling
-- Predefined: `NO_DATA_FOUND`, `TOO_MANY_ROWS`.
-- User-defined: `e_insufficient_funds`, `e_invalid_type`.
-- `RAISE_APPLICATION_ERROR` codes -20001 to -20006 give clear messages.
-- Our own errors are re-raised, never hidden, and unexpected errors
-  become -20099 with `SQLERRM`.
-- On failure the transaction is rolled back, and insufficient-funds
-  failures are logged in `bank_transactions` as FAILED.
+| Exception | Where | Handling |
+|---|---|---|
+| `NO_DATA_FOUND` | procedure and functions | Clear message, no silent failure |
+| `TOO_MANY_ROWS` | `get_savings_account_id` | Shown with a customer that has two savings accounts |
+| User-defined (`e_insufficient_funds`, `e_invalid_type`) | `process_transaction` | Rolls back, logs FAILED transactions |
+| `RAISE_APPLICATION_ERROR` | all objects | Codes -20001 to -20023 with meaningful text |
+| Bulk errors (-24381) | `apply_monthly_interest` | Per-row report, partial success kept |
 
-## Concurrency
-`SELECT ... FOR UPDATE` locks the account row so two withdrawals cannot
-read the same balance at the same time.
+Every `WHEN OTHERS` handler first re-raises our own -20xxx errors unchanged, then
+wraps anything unexpected with its original `SQLERRM`, so errors are never hidden.
 
-## Limitations
+## Testing
+- `test_success_cases.sql`: balance query, deposit, monthly interest, total balance,
+  and data verification.
+- `test_error_cases.sql`: ten failure cases covering every exception type.
+- Screenshots of each run are in `screenshots/`.
+
+
+
 No transfer between accounts yet (no destination account column).
